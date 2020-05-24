@@ -20,6 +20,7 @@ test('renders login page', () => {
 
   expect(registerLink).toBeInTheDocument();
   expect(registerLink).toHaveTextContent('Cadastre-se');
+  expect(registerLink).toHaveAttribute('href', '/cadastro');
 
   expect(forgotPasswordLink).toBeInTheDocument();
   expect(forgotPasswordLink).toHaveTextContent('Esqueci minha senha');

@@ -21,42 +21,32 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function LoginPage() {
+function RegisterPage() {
   const classes = useStyles();
 
-  function handleLogin(email, password) {
-    console.log('Submit Login');
+  function handleRegister(email, password) {
+    console.log('Submit Register');
     console.log('email', email);
     console.log('password', password);
   }
 
   return (
     <Container className={classes.main} maxWidth="xs">
-        <h1 className={classes.h1} id="title">Login</h1>
+        <h1 className={classes.h1} id="title">Cadastro</h1>
         <EmailAndPasswordForm
-          buttonLabel="Entrar"
-          callback={handleLogin}
+          buttonLabel="Cadastrar-se"
+          callback={handleRegister}
         />
 
-        <Grid container justify="space-between">
+        <Grid container justify="flex-end">
           <Grid item className={classes.link}>
             <Link
               underline="none"
-              id="forgot-password"
+              id="login"
               component={RouterLink}
               to="/"
             >
-              Esqueci minha senha
-            </Link>
-          </Grid>
-          <Grid item className={classes.link}>
-            <Link
-              underline="none"
-              id="register"
-              component={RouterLink}
-              to="/cadastro"
-            >
-              Cadastre-se
+              Já possuo conta
             </Link>
           </Grid>
         </Grid>
@@ -64,4 +54,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
