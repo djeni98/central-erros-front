@@ -1,6 +1,4 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { render, fireEvent } from '@testing-library/react';
 import EmailAndPasswordForm from './EmailAndPasswordForm';
 

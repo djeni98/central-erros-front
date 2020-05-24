@@ -42,9 +42,9 @@ function LoginPage() {
           <Grid item className={classes.link}>
             <Link
               underline="none"
-              id="forgot-password"
+              id="recover-password"
               component={RouterLink}
-              to="/"
+              to="/recuperar"
             >
               Esqueci minha senha
             </Link>
