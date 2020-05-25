@@ -5,6 +5,8 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import RecoverPasswordPage from './components/RecoverPasswordPage';
 
+import LogListPage from './components/LogListPage';
+
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +14,7 @@ function App() {
         <Route path="/" exact component={LoginPage} />
         <Route path="/cadastro" exact component={RegisterPage} />
         <Route path='/recuperar' exact component={RecoverPasswordPage} />
+        <Route path="/logs" exact component={LogListPage} />
       </Switch>
     </BrowserRouter>
   );
