@@ -14,6 +14,9 @@ import UserDrawer from './UserDrawer';
 const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
+  },
+  toolbar: {
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -27,7 +30,7 @@ function Header() {
   return (
     <>
       <AppBar>
-        <Toolbar>
+        <Toolbar position="fixed">
           <span className={classes.title}>
             <Typography
               variant="h5"
@@ -57,6 +60,7 @@ function Header() {
           </IconButton>
         </Toolbar>
       </AppBar>
+      <Toolbar className={classes.toolbar} />
 
       <UserDrawer
         id="user-drawer"
