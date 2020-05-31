@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -23,11 +23,14 @@ const useStyles = makeStyles((theme) => ({
 
 function LoginPage() {
   const classes = useStyles();
+  const history = useHistory();
 
   function handleLogin(email, password) {
     console.log('Submit Login');
     console.log('email', email);
     console.log('password', password);
+
+    history.push('/logs');
   }
 
   return (

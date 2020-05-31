@@ -32,6 +32,7 @@ function UserDrawer(props) {
 
   const classes = useStyles();
   const { drawer, setDrawer } = props;
+  const { handleLogout } = props;
 
   function toggleDrawer(e, open) {
     if (e.type === 'keydown' &&
@@ -106,6 +107,7 @@ function UserDrawer(props) {
             fullWidth
             color="secondary"
             variant="outlined"
+            onClick={handleLogout}
             endIcon={<ExitIcon id="exit-icon" />}
           >
             Logout

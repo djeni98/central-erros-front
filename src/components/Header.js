@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -25,7 +26,12 @@ function Header() {
   const email = "test@test.com"
 
   const classes = useStyles();
+  const history = useHistory();
   const [drawer, setDrawer] = useState(false);
+
+  function handleLogout() {
+    history.push('/');
+  }
 
   return (
     <>
@@ -68,6 +74,7 @@ function Header() {
         token={token}
         drawer={drawer}
         setDrawer={setDrawer}
+        handleLogout={handleLogout}
       />
     </>
   );
