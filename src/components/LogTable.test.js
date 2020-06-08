@@ -1,11 +1,10 @@
 import React from 'react';
-import { render, prettyDOM } from '@testing-library/react';
-import Checkbox from '@material-ui/core/Checkbox';
+import { render, screen, getByRole, fireEvent } from '@testing-library/react';
 
 import LogTable from './LogTable';
 
 const createData = (id, level, description, source, date, events) => (
-  { id, level, description, source, date, events }
+  { id, level: level.toUpperCase(), description, source, date, events }
 );
 
 const data = [
@@ -16,34 +15,17 @@ const data = [
 ]
 
 test('renders log table', () => {
-  const rows = [data[0]];
+  const rows = data;
 
-  const { container } = render(
-    <LogTable rows={rows} />
-  );
-  
-  const table = container.querySelector('table');
+  render(<LogTable rows={rows} />);
 
-  const archiveButton = container.querySelector('[id="archive-button"]');
-  const deleteButton = container.querySelector('[id="delete-button"]');
+  const archiveButton = screen.getByRole('button', { name: /arquivar/i });
+  const deleteButton = screen.getByRole('button', { name: /apagar/i });
 
-  const tableHead = container.querySelector('thead');
-  const tableColsCheckbox = tableHead.querySelector('[type="checkbox"]');
-  const tableColsExpected = [
-    'Nível', 'Descrição', 'Origem', 'Data', 'Eventos'
-  ];
-  let tableCols = tableHead.getElementsByTagName('th');
-  tableCols = Object.values(tableCols).map(
-    item => item.innerHTML
-  );
+  const table = screen.getByRole('table');
 
-  const tableBody = container.querySelector('tbody');
-  const tableItensCheckbox = tableBody.querySelector('[type="checkbox"]');
-  const tableItensExpected = [
-    rows[0].level.toUpperCase(), rows[0].description,
-    rows[0].source, rows[0].date, rows[0].events
-  ];
-  let tableItens = tableBody.querySelector('tr');
+  const tableRows = screen.getAllByRole('row');
+  const firstRow = tableRows.shift();
 
   expect(archiveButton).toBeInTheDocument();
   expect(archiveButton).toHaveTextContent('Arquivar');
@@ -52,14 +34,95 @@ test('renders log table', () => {
   expect(deleteButton).toHaveTextContent('Apagar');
 
   expect(table).toBeInTheDocument();
-  
-  expect(tableHead).toBeInTheDocument();
-  expect(tableHead).toContainElement(tableColsCheckbox);
-  expect(tableCols).toEqual(expect.arrayContaining(tableColsExpected));
 
-  expect(tableBody).toBeInTheDocument();
-  expect(tableItens).toContainElement(tableItensCheckbox);
-  tableItensExpected.forEach(
-    item => expect(tableItens).toHaveTextContent(item)
-  );
+  expect(firstRow).toBeInTheDocument();
+  expect(firstRow).toContainElement(getByRole(firstRow, 'checkbox'));
+  ['Nível', 'Descrição', 'Origem', 'Data', 'Eventos'].forEach(col => {
+    expect(firstRow).toHaveTextContent(col)
+  });
+
+  tableRows.forEach((row, index) => {
+    const content = rows[index];
+
+    expect(row).toContainElement(getByRole(row, 'checkbox'));
+    expect(row).toHaveTextContent(content.level);
+    expect(row).toHaveTextContent(content.description);
+    expect(row).toHaveTextContent(content.source);
+    expect(row).toHaveTextContent(content.date);
+    expect(row).toHaveTextContent(content.events);
+  });
+});
+
+test('selects rows', () => {
+  const rows = data;
+
+  render(<LogTable rows={rows} />);
+
+  const tableRows = screen.getAllByRole('row');
+  tableRows.shift();
+
+  const selectIndex = [0, 2, 3];
+
+  tableRows.forEach((row, index) => {
+    const checkbox = getByRole(row, 'checkbox');
+
+    if (selectIndex.includes(index)) {
+      fireEvent.click(checkbox);
+      expect(checkbox).toBeChecked();
+    } else {
+      expect(checkbox).not.toBeChecked();
+    }
+  });
+});
+
+test('delete callback returns selected ids', () => {
+  const rows = data;
+
+  let receivedIds;
+  const callback = (ids) => receivedIds = ids
+
+  render(<LogTable rows={rows} deleteFunction={callback} />);
+
+  const deleteButton = screen.getByRole('button', { name: /apagar/i });
+
+  const tableRows = screen.getAllByRole('row');
+  tableRows.shift();
+
+  const selectIndex = [0, 2, 3];
+  const expectedIds = selectIndex.map(index => rows[index].id);
+
+  selectIndex.forEach(index => {
+    const row = tableRows[index];
+    fireEvent.click(getByRole(row, 'checkbox'));
+  });
+
+  fireEvent.click(deleteButton);
+
+  expect(receivedIds).toStrictEqual(expectedIds);
+});
+
+test('archive callback returns selected ids', () => {
+  const rows = data;
+
+  let receivedIds;
+  const callback = (ids) => receivedIds = ids
+
+  render(<LogTable rows={rows} archiveFunction={callback} />);
+
+  const archiveButton = screen.getByRole('button', { name: /arquivar/i });
+
+  const tableRows = screen.getAllByRole('row');
+  tableRows.shift();
+
+  const selectIndex = [0, 1, 3];
+  const expectedIds = selectIndex.map(index => rows[index].id);
+
+  selectIndex.forEach(index => {
+    const row = tableRows[index];
+    fireEvent.click(getByRole(row, 'checkbox'));
+  });
+
+  fireEvent.click(archiveButton);
+
+  expect(receivedIds).toStrictEqual(expectedIds);
 });

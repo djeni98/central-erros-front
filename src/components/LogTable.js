@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import Table from '@material-ui/core/Table';
@@ -46,6 +46,43 @@ function LogTable(props) {
     { field: 'events', label: 'Eventos' }
   ];
 
+  const [selected, setSelected] = useState([]);
+
+  const deleteFunction = props.deleteFunction || console.log;
+  const archiveFunction = props.archiveFunction || console.log;
+
+  function selectAll(e) {
+    if (e.target.checked) {
+      const all = rows.map(r => r.id);
+      setSelected(all);
+    } else {
+      setSelected([]);
+    }
+  }
+
+  function selectItem(e, id) {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  }
+
+  const total = rows.length;
+  const numSelected = selected.length;
+
   return (
     <>
     <div id="action-buttons" className={classes.buttons}>
@@ -55,6 +92,7 @@ function LogTable(props) {
         id="archive-button"
         className={classes.button}
         startIcon={<ArchiveIcon />}
+        onClick={(e) => archiveFunction(selected)}
       >
         Arquivar
       </Button>
@@ -64,6 +102,7 @@ function LogTable(props) {
         id="delete-button"
         className={classes.button}
         startIcon={<DeleteIcon />}
+        onClick={(e) => deleteFunction(selected)}
       >
         Apagar
       </Button>
@@ -73,7 +112,11 @@ function LogTable(props) {
       <TableHead>
         <TableRow>
           <TableCell padding="checkbox">
-            <Checkbox />
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < total}
+              checked={total > 0 && numSelected === total}
+              onChange={selectAll}
+            />
           </TableCell>
           <TableCell className={classes.level}>
             Nível
@@ -89,7 +132,10 @@ function LogTable(props) {
         {rows.map((row) => (
           <TableRow key={row.id}>
             <TableCell padding="checkbox">
-              <Checkbox />
+              <Checkbox
+                checked={selected.includes(row.id)}
+                onChange={e => selectItem(e, row.id)}
+              />
             </TableCell>
             <TableCell className={classes.level}>
               <LevelChip label={row.level} />
