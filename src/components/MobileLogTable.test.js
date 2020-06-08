@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, screen, getByRole, fireEvent } from '@testing-library/react';
+import { render, screen, getByRole, getAllByRole, fireEvent } from '@testing-library/react';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import MobileLogTable from './MobileLogTable';
 
 const createData = (id, level, description, source, date, events) => (
@@ -121,3 +123,24 @@ test('archive callback returns selected ids', () => {
 
   expect(receivedIds).toStrictEqual(expectedIds);
 });
+
+test('redirects on description click', () => {
+  const rows = data;
+
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <MobileLogTable rows={rows} />
+    </Router>
+  );
+
+  const tableRows = screen.getAllByRole('row');
+  tableRows.shift();
+
+  const selectedIndex = 0;
+  const expectedId = rows[selectedIndex].id;
+  const cell = getAllByRole(tableRows[selectedIndex], 'cell');
+
+  fireEvent.click(cell[1]);
+  expect(history.location.pathname).toStrictEqual(`/logs/${expectedId}`);
+})

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import Table from '@material-ui/core/Table';
@@ -10,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ShowIcon from '@material-ui/icons/Visibility';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -36,6 +38,8 @@ function LogTable(props) {
   const classes = useStyles();
 
   const rows = props.rows || [];
+
+  const history = useHistory();
 
   const cols = [
     // { field: 'id', label: 'ID' },
@@ -126,11 +130,15 @@ function LogTable(props) {
               {col.label}
             </TableCell>
           ))}
+          <TableCell />
         </TableRow>
       </TableHead>
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
+          <TableRow
+            key={row.id}
+            selected={selected.includes(row.id)}
+          >
             <TableCell padding="checkbox">
               <Checkbox
                 checked={selected.includes(row.id)}
@@ -147,7 +155,17 @@ function LogTable(props) {
             <TableCell className={classes.word}>
               {row.description}
             </TableCell>
-            <TableCell>{row.events}</TableCell>
+            <TableCell align="right">{row.events}</TableCell>
+            <TableCell>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => history.push(`/logs/${row.id}`)}
+                startIcon={<ShowIcon />}
+              >
+                Exibir
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

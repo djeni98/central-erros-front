@@ -1,6 +1,9 @@
 import React from 'react';
 import { render, screen, getByRole, fireEvent } from '@testing-library/react';
 
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+
 import LogTable from './LogTable';
 
 const createData = (id, level, description, source, date, events) => (
@@ -50,6 +53,7 @@ test('renders log table', () => {
     expect(row).toHaveTextContent(content.source);
     expect(row).toHaveTextContent(content.date);
     expect(row).toHaveTextContent(content.events);
+    expect(row).toContainElement(getByRole(row, 'button'));
   });
 });
 
@@ -126,3 +130,24 @@ test('archive callback returns selected ids', () => {
 
   expect(receivedIds).toStrictEqual(expectedIds);
 });
+
+test('redirects on show button click', () => {
+  const rows = data;
+
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <LogTable rows={rows} />
+    </Router>
+  );
+
+  const tableRows = screen.getAllByRole('row');
+  tableRows.shift();
+
+  const selectedIndex = 0;
+  const expectedId = rows[selectedIndex].id;
+  const showButton = getByRole(tableRows[selectedIndex], 'button');
+
+  fireEvent.click(showButton);
+  expect(history.location.pathname).toStrictEqual(`/logs/${expectedId}`);
+})

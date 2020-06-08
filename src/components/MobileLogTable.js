@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import Table from '@material-ui/core/Table';
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
+  clickable: {
+    cursor: 'pointer'
+  },
   word: {
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -31,6 +35,8 @@ function MobileLogTable(props) {
   const classes = useStyles();
 
   const rows = props.rows || [];
+
+  const history = useHistory();
 
   const [selected, setSelected] = useState([]);
 
@@ -111,14 +117,21 @@ function MobileLogTable(props) {
       </TableHead>
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
+          <TableRow
+            key={row.id}
+            hover
+            selected={selected.includes(row.id)}
+          >
             <TableCell padding="checkbox">
               <Checkbox
                 checked={selected.includes(row.id)}
                 onChange={e => selectItem(e, row.id)}
               />
             </TableCell>
-            <TableCell>
+            <TableCell
+              className={classes.clickable}
+              onClick={() => history.push(`/logs/${row.id}`)}
+            >
               <div className={classes.word}>{row.description}</div>
               <div className={classes.word}>{row.source}</div>
               <div className={classes.word}>{row.date}</div>
