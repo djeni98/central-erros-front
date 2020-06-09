@@ -8,6 +8,7 @@ import RegisterPage from './components/RegisterPage';
 import RecoverPasswordPage from './components/RecoverPasswordPage';
 
 import LogListPage from './components/LogListPage';
+import ShowLogPage from './components/ShowLogPage';
 
 const theme = createMuiTheme({}, ptBR);
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/cadastro" exact component={RegisterPage} />
         <Route path='/recuperar' exact component={RecoverPasswordPage} />
         <Route path="/logs" exact component={LogListPage} />
+        <Route path="/logs/:id" exact component={ShowLogPage} />
       </Switch>
     </BrowserRouter>
     </ThemeProvider>
