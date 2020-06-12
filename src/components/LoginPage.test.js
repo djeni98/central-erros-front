@@ -1,32 +1,29 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render } from '@testing-library/react';
+import { Router, MemoryRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { render, screen, fireEvent } from '@testing-library/react';
 import LoginPage from './LoginPage';
-import EmailAndPasswordForm from './EmailAndPasswordForm';
 
 test('renders login page', () => {
-  const div = document.createElement('div');
-  render(
-    <EmailAndPasswordForm buttonLabel="Entrar" />,
-    { container: div }
-  );
-  const emailAndPasswordForm = div.querySelector('form');
+  render(<LoginPage />, { wrapper: MemoryRouter });
 
-  const { container, debug } = render(
-    <LoginPage />,
-    { wrapper: MemoryRouter }
-  );
+  const loginTitle = screen.getByRole('heading');
 
-  const loginTitle = container.querySelector('[id="title"]');
-  const loginForm = container.querySelector('form');
+  // EmailAndPasswordForm
+  const emailInput = screen.getByRole('textbox');
+  const passwordInput = screen.getByLabelText(/senha/i);
+  const buttonSubmit = screen.getByRole('button')
 
-  const registerLink = container.querySelector('[id="register"]');
-  const recoverPasswordLink = container.querySelector('[id="recover-password"]');
+  const registerLink = screen.getByRole('link', { name: /cadastre-se/i });
+  const recoverPasswordLink = screen.getByRole('link', { name: /esqueci minha senha/i });
 
   expect(loginTitle).toBeInTheDocument();
   expect(loginTitle).toHaveTextContent('Login');
 
-  expect(loginForm).toStrictEqual(emailAndPasswordForm);
+  // EmailAndPasswordForm
+  expect(emailInput).toBeInTheDocument();
+  expect(passwordInput).toBeInTheDocument();
+  expect(buttonSubmit).toBeInTheDocument();
 
   expect(registerLink).toBeInTheDocument();
   expect(registerLink).toHaveTextContent('Cadastre-se');
@@ -35,4 +32,32 @@ test('renders login page', () => {
   expect(recoverPasswordLink).toBeInTheDocument();
   expect(recoverPasswordLink).toHaveTextContent('Esqueci minha senha');
   expect(recoverPasswordLink).toHaveAttribute('href', '/recuperar');
+});
+
+test('redirects on register link click', () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <LoginPage />
+    </Router>
+  );
+
+  const registerLink = screen.getByRole('link', { name: /cadastre-se/i });
+
+  fireEvent.click(registerLink);
+  expect(history.location.pathname).toStrictEqual('/cadastro');
+});
+
+test('redirects on recover password link click', () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <LoginPage />
+    </Router>
+  );
+
+  const recoverPasswordLink = screen.getByRole('link', { name: /esqueci minha senha/i });
+
+  fireEvent.click(recoverPasswordLink);
+  expect(history.location.pathname).toStrictEqual('/recuperar');
 });
