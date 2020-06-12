@@ -1,32 +1,44 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render } from '@testing-library/react';
+import { Router, MemoryRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { render, screen, fireEvent } from '@testing-library/react';
 import RegisterPage from './RegisterPage';
-import EmailAndPasswordForm from './EmailAndPasswordForm';
 
 test('renders register page', () => {
-  const div = document.createElement('div');
-  render(
-    <EmailAndPasswordForm buttonLabel="Cadastrar-se" />,
-    { container: div }
-  );
-  const emailAndPasswordForm = div.querySelector('form');
+  render(<RegisterPage />, { wrapper: MemoryRouter });
 
-  const { container } = render(
-    <RegisterPage />,
-    { wrapper: MemoryRouter }
-  );
+  const registerTitle = screen.getByRole('heading');
 
-  const registerTitle = container.querySelector('[id="title"]');
-  const registerForm = container.querySelector('form');
-  const loginLink = container.querySelector('[id="login"]');
+  // EmailAndPasswordForm
+  const emailInput = screen.getByRole('textbox');
+  const passwordInput = screen.getByLabelText(/senha/i);
+  const buttonSubmit = screen.getByRole('button')
+
+  const loginLink = screen.getByRole('link');
 
   expect(registerTitle).toBeInTheDocument();
   expect(registerTitle).toHaveTextContent('Cadastro');
 
-  expect(registerForm).toStrictEqual(emailAndPasswordForm);
+  // EmailAndPasswordForm
+  expect(emailInput).toBeInTheDocument();
+  expect(passwordInput).toBeInTheDocument();
+  expect(buttonSubmit).toBeInTheDocument();
 
   expect(loginLink).toBeInTheDocument();
   expect(loginLink).toHaveTextContent('Já possuo conta');
   expect(loginLink).toHaveAttribute('href', '/');
+});
+
+test('redirects on login link click', () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <RegisterPage />
+    </Router>
+  );
+
+  const loginLink = screen.getByRole('link');
+
+  fireEvent.click(loginLink);
+  expect(history.location.pathname).toStrictEqual('/');
 });
