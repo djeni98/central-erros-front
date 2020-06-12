@@ -12,7 +12,6 @@ function LevelChip(props) {
     'ERROR': red[500],
     'WARNING': amber[500],
     'DEBUG': blue[500],
-    'NENHUM': grey[500]
   }
 
   return (
@@ -20,7 +19,7 @@ function LevelChip(props) {
       id="chip"
       label={label.toUpperCase()}
       style={
-        { backgroundColor: mapColors[label.toUpperCase()] }
+        { backgroundColor: mapColors[label.toUpperCase()] || grey[500] }
       }
     />
   );
