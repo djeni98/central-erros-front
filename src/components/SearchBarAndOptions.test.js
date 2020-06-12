@@ -1,43 +1,96 @@
 import React from 'react';
-import { render, fireEvent, prettyDOM } from '@testing-library/react';
+import { screen, render, fireEvent, getAllByRole } from '@testing-library/react';
 import SearchBarAndOptions from './SearchBarAndOptions';
 
 test('renders search bar and options', () => {
-  const { container, debug } = render(<SearchBarAndOptions />);
+  render(<SearchBarAndOptions />);
 
   const environmentExpected = ['Produção', 'Homologação', 'Desenvolvimento'];
-  const environmentField = container.querySelector('[id="environment"]');
-  let environmentOptions = environmentField.getElementsByTagName('option');
-  environmentOptions = Object.values(environmentOptions).map(
-    item => item.innerHTML
-  );
+  const environmentField = screen.getByLabelText(/ambiente/i);
 
   const orderExpected = ['Nível', 'Frequencia'];
-  const orderField = container.querySelector('[id="order"]');
-  let orderOptions = orderField.getElementsByTagName('option');
-  orderOptions = Object.values(orderOptions).map(
-    item => item.innerHTML
-  );
+  const orderField = screen.getByLabelText(/ordenar/i);
 
   const searchByExpected = ['Nível', 'Descrição', 'Origem'];
-  const searchByField = container.querySelector('[id="search-by"]');
-  let searchByOptions = searchByField.getElementsByTagName('option');
-  searchByOptions = Object.values(searchByOptions).map(
-    item => item.innerHTML
-  );
+  const searchByField = screen.getByLabelText(/procurar/i);
 
-  const searchBar = container.querySelector('[id="search-bar"]');
-  const searchButton = container.querySelector('[id="search-button"]');
+  const searchBar = screen.getByRole('textbox');
+  const searchButton = screen.getByRole('button');
 
   expect(environmentField).toBeInTheDocument();
-  expect(environmentOptions).toEqual(expect.arrayContaining(environmentExpected));
+  environmentExpected.forEach(environment =>
+    expect(environmentField).toHaveTextContent(environment)
+  )
 
   expect(orderField).toBeInTheDocument();
-  expect(orderOptions).toEqual(expect.arrayContaining(orderExpected));
+  orderExpected.forEach(order =>
+    expect(orderField).toHaveTextContent(order)
+  )
 
   expect(searchByField).toBeInTheDocument();
-  expect(searchByOptions).toEqual(expect.arrayContaining(searchByExpected));
+  searchByExpected.forEach(searchBy =>
+    expect(searchByField).toHaveTextContent(searchBy)
+  )
 
   expect(searchBar).toBeInTheDocument();
   expect(searchButton).toBeInTheDocument();
+});
+
+test('changes select fields information', () => {
+  render(<SearchBarAndOptions />);
+
+  const environmentField = screen.getByLabelText(/ambiente/i);
+  const orderField = screen.getByLabelText(/ordenar/i);
+  const searchByField = screen.getByLabelText(/procurar/i);
+  const searchBar = screen.getByRole('textbox');
+
+  const searchButton = screen.getByRole('button');
+  
+  const environment = '1';
+  const order = '2';
+  const searchBy = '3';
+  const search = 'localhost';
+
+  fireEvent.change(environmentField, { target: { value: environment } });
+  expect(environmentField).toHaveValue(environment);
+
+  fireEvent.change(orderField, { target: { value: order } });
+  expect(orderField).toHaveValue(order);
+
+  fireEvent.change(searchByField, { target: { value: searchBy } });
+  expect(searchByField).toHaveValue(searchBy);
+
+  fireEvent.change(searchBar, { target: { value: search } });
+  expect(searchBar).toHaveValue(search);
+});
+
+test('sends information on button click', () => {
+  let form;
+  const callback = (params) => { 
+    form = params;
+  }
+
+  render(<SearchBarAndOptions callback={callback} />);
+
+  const environmentField = screen.getByLabelText(/ambiente/i);
+  const orderField = screen.getByLabelText(/ordenar/i);
+  const searchByField = screen.getByLabelText(/procurar/i);
+  const searchBar = screen.getByRole('textbox');
+
+  const searchButton = screen.getByRole('button');
+  
+  const environment = '0';
+  const order = '0';
+  const searchBy = '0';
+  const search = '';
+
+  // Default values
+  expect(environmentField).toHaveValue(environment);
+  expect(orderField).toHaveValue(order);
+  expect(searchByField).toHaveValue(searchBy);
+  expect(searchBar).toHaveValue(search);
+
+  fireEvent.click(searchButton);
+
+  expect(form).toStrictEqual({ environment, order, searchBy, search });
 });

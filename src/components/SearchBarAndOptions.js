@@ -31,27 +31,27 @@ const useStyles = makeStyles((theme) => ({
 function SearchBarAndOptions(props) {
   const classes = useStyles();
 
-  const [environment, setEnvironment] = useState(0);
+  const [environment, setEnvironment] = useState('0');
   const environmentOptions = [
-    { value: 0, label: 'Todos' },
-    { value: 1, label: 'Produção' },
-    { value: 2, label: 'Homologação' },
-    { value: 3, label: 'Desenvolvimento' }
+    { value: '0', label: 'Todos' },
+    { value: '1', label: 'Produção' },
+    { value: '2', label: 'Homologação' },
+    { value: '3', label: 'Desenvolvimento' }
   ];
 
-  const [order, setOrder] = useState(0);
+  const [order, setOrder] = useState('0');
   const orderOptions = [
-    { value: 0, label: 'Todos' },
-    { value: 1, label: 'Nível' },
-    { value: 2, label: 'Frequencia' },
+    { value: '0', label: 'Todos' },
+    { value: '1', label: 'Nível' },
+    { value: '2', label: 'Frequencia' },
   ];
 
-  const [searchBy, setSearchBy] = useState(0);
+  const [searchBy, setSearchBy] = useState('0');
   const searchByOptions = [
-    { value: 0, label: 'Todos' },
-    { value: 1, label: 'Nível' },
-    { value: 2, label: 'Descrição' },
-    { value: 3, label: 'Origem' }
+    { value: '0', label: 'Todos' },
+    { value: '1', label: 'Nível' },
+    { value: '2', label: 'Descrição' },
+    { value: '3', label: 'Origem' }
   ];
 
   const [search, setSearch] = useState('');
