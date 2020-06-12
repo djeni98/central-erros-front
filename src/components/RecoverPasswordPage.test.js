@@ -1,21 +1,18 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { Router, MemoryRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import RecoverPasswordPage from './RecoverPasswordPage';
 
-test('renders login page', () => {
-  const { container } = render(
-    <RecoverPasswordPage />,
-    { wrapper: MemoryRouter }
-  );
+test('renders recover password page', () => {
+  render(<RecoverPasswordPage />, { wrapper: MemoryRouter });
 
-  const title = container.querySelector('[id="title"]');
+  const title = screen.getByRole('heading');
 
-  const emailInput = container.querySelector('[id="email"]');
-  const buttonSubmit = container.querySelector('[id="button-submit"]');
+  const emailInput = screen.getByRole('textbox');
+  const buttonSubmit = screen.getByRole('button');
 
-  const loginLink = container.querySelector('[id="login"]');
+  const loginLink = screen.getByRole('link');
 
   expect(title).toBeInTheDocument();
   expect(title).toHaveTextContent('Recuperar senha');
@@ -26,4 +23,18 @@ test('renders login page', () => {
   expect(loginLink).toBeInTheDocument();
   expect(loginLink).toHaveTextContent('Voltar ao login');
   expect(loginLink).toHaveAttribute('href', '/');
+});
+
+test('redirects on login link click', () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <RecoverPasswordPage />
+    </Router>
+  );
+
+  const loginLink = screen.getByRole('link');
+
+  fireEvent.click(loginLink);
+  expect(history.location.pathname).toStrictEqual('/');
 });
