@@ -1,31 +1,28 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import Header from './Header';
 
 test('renders app bar', () => {
-  const { container } = render(<Header />);
+  render(<Header />);
 
-  const welcomeText = container.querySelector('[id="welcome"]');
-  const drawerButton = container.querySelector('[id="drawer-button"]');
-  const svgIcon = container.querySelector('[id="menu-icon"]');
+  const welcomeText = screen.getByRole('heading');
+  const drawerButton = screen.getByRole('button');
 
   expect(welcomeText).toBeInTheDocument();
   expect(welcomeText).toHaveTextContent('Bem-vindo.');
 
   expect(drawerButton).toBeInTheDocument();
-  expect(drawerButton).toContainElement(svgIcon);
 });
 
 test('toggle user drawer on button click', () => {
-  const { container, baseElement } = render(<Header />);
+  const { baseElement } = render(<Header />);
 
-  const drawerButton = container.querySelector('[id="drawer-button"]');
-
-  let userDrawer = baseElement.querySelector('[id="user-drawer"]');
+  const drawerButton = screen.getByRole('button');
+  let userDrawer = screen.queryByRole('presentation');
 
   expect(baseElement).not.toContainElement(userDrawer);
   fireEvent.click(drawerButton);
 
-  userDrawer = baseElement.querySelector('[id="user-drawer"]');
+  userDrawer = screen.getByRole('presentation');
   expect(baseElement).toContainElement(userDrawer);
 });

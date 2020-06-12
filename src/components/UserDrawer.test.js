@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, fireEvent, prettyDOM } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import UserDrawer from './UserDrawer';
 
 test('renders user drawer', () => {
   const email = 'test@test.com';
   const token = 'asdfgfdsa TOKEN asdfgfdsa';
 
-  const { container, debug, baseElement } = render(
+  render(
     <UserDrawer
       email={email}
       token={token}
@@ -15,36 +15,30 @@ test('renders user drawer', () => {
     />
   );
 
-  const closeButton = baseElement.querySelector('[id="close-button"]');
-  const closeIcon = baseElement.querySelector('[id="close-icon"]');
+  const closeButton = screen.getByRole('button', { name: /close/i });
 
-  const emailItem = baseElement.querySelector('[id="email"]');
-  const tokenItem = baseElement.querySelector('[id="token"]');
+  const emailItem = screen.getByText(email);
+  const tokenItem = screen.getByText(token);
 
-  const logoutButton = baseElement.querySelector('[id="logout-button"]');
-  const exitIcon = baseElement.querySelector('[id="exit-icon"]');
+  const logoutButton = screen.getByRole('button', { name: /logout/i });
 
   expect(closeButton).toBeInTheDocument();
-  expect(closeButton).toContainElement(closeIcon);
 
   expect(emailItem).toBeInTheDocument();
-  expect(emailItem).toHaveTextContent('Email');
   expect(emailItem).toHaveTextContent(email);
 
   expect(tokenItem).toBeInTheDocument();
-  expect(tokenItem).toHaveTextContent('Token');
   expect(tokenItem).toHaveTextContent(token);
 
   expect(logoutButton).toBeInTheDocument();
   expect(logoutButton).toHaveTextContent('Logout');
-  expect(logoutButton).toContainElement(exitIcon);
 });
 
 const TestDrawer = () => {
   const [drawer, setDrawer] = React.useState(true);
   return (
     <>
-      <span id="open-drawer">{drawer ? 'true': 'false'}</span>
+      <span id="open-drawer">drawer: {drawer ? 'true': 'false'}</span>
       <UserDrawer
         email=""
         token=""
@@ -56,12 +50,10 @@ const TestDrawer = () => {
 }
 
 test('close button closes drawer', () => {
-  const { container, baseElement } = render(
-    <TestDrawer />
-  );
+  const { baseElement } = render(<TestDrawer />);
 
-  const closeButton = baseElement.querySelector('[id="close-button"]');
-  const openDrawer = baseElement.querySelector('[id="open-drawer"]');
+  const closeButton = screen.getByRole('button', { name: /close/i });
+  const openDrawer = screen.getByText(/drawer/i);
 
   expect(openDrawer).toHaveTextContent('true');
   expect(closeButton).toBeInTheDocument();
@@ -72,12 +64,10 @@ test('close button closes drawer', () => {
 });
 
 test('backdrop closes drawer', () => {
-  const { container, debug, baseElement } = render(
-    <TestDrawer />
-  );
+  const { baseElement } = render(<TestDrawer />);
 
   const backdrop = baseElement.querySelector('.MuiBackdrop-root');
-  const openDrawer = baseElement.querySelector('[id="open-drawer"]');
+  const openDrawer = screen.getByText(/drawer/i);
 
   expect(openDrawer).toHaveTextContent('true');
   expect(backdrop).toBeInTheDocument();
