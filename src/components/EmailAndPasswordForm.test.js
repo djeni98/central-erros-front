@@ -1,13 +1,13 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import EmailAndPasswordForm from './EmailAndPasswordForm';
 
 test('renders email and password form', () => {
-  const { container } = render(<EmailAndPasswordForm />);
+  render(<EmailAndPasswordForm />);
 
-  const emailInput = container.querySelector('[id="email"]');
-  const passwordInput = container.querySelector('[id="password"]');
-  const buttonSubmit = container.querySelector('[id="button-submit"]');
+  const emailInput = screen.getByRole('textbox');
+  const passwordInput = screen.getByLabelText(/senha/i);
+  const buttonSubmit = screen.getByRole('button')
 
   expect(emailInput).toBeInTheDocument();
   expect(passwordInput).toBeInTheDocument();
@@ -21,13 +21,11 @@ test('sends valid email and password', () => {
     form = { email, password };
   }
 
-  const { container } = render(
-    <EmailAndPasswordForm callback={callback} />
-  );
+  render(<EmailAndPasswordForm callback={callback} />);
 
-  const emailInput = container.querySelector('[id="email"]');
-  const passwordInput = container.querySelector('[id="password"]');
-  const buttonSubmit = container.querySelector('[id="button-submit"]');
+  const emailInput = screen.getByRole('textbox');
+  const passwordInput = screen.getByLabelText(/senha/i);
+  const buttonSubmit = screen.getByRole('button')
 
   const email = 'example@example.com';
   const password = 'testpassword';
